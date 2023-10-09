@@ -27,6 +27,7 @@
 .login-button:hover,
 .signup-button:hover{
   color: #7CB9E8;
+  font-weight: 'bolder';
   /* background-color: rgb(237, 241, 243); */
 } 
 

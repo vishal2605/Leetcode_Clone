@@ -85,6 +85,17 @@ router.get('/problemSetAll', (req, res) => __awaiter(void 0, void 0, void 0, fun
 router.post('/problem', auth_2.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const problem = new db_1.Problems(req.body);
     yield problem.save();
+    const tag = req.body.tag;
+    console.log(req.body);
+    const checkTag = yield db_1.Tag.find({ tag: tag });
+    if (checkTag && checkTag.length != undefined) {
+        const putTag = yield db_1.Tag.findOneAndUpdate({ tag: tag, length: checkTag.length + 1 });
+    }
+    else {
+        const obj = { tag: problem.tag, length: 1 };
+        const newTag = new db_1.Tag(obj);
+        yield newTag.save();
+    }
     res.json({ message: 'Problem created successfully', problemId: problem.id });
 }));
 router.put('/problems/:problemId', auth_2.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -96,13 +107,17 @@ router.put('/problems/:problemId', auth_2.authenticateJwt, (req, res) => __await
         res.status(404).json({ message: 'Problem not found' });
     }
 }));
+router.get('/tag', auth_2.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const tag = db_1.Tag.find({});
+    res.json({ tag });
+}));
 router.get('/problems/:problemId', auth_2.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const problem = yield db_1.Problems.findById(req.params.problemId);
     if (problem) {
         res.json(problem);
     }
     else {
-        res.status(404).json("Course not found");
+        res.status(404).json("Questions not found");
     }
 }));
 exports.default = router;

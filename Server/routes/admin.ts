@@ -1,6 +1,6 @@
 import  mongoose from 'mongoose';
 import express from 'express';
-import {User,Problems,Admin} from '../db';
+import {User,Problems,Admin,Tag} from '../db';
 import jwt from 'jsonwebtoken';
 import  {SECRET} from '../middleware/auth';
 import {authenticateJwt} from '../middleware/auth';
@@ -73,6 +73,17 @@ router.post('/signup',async (req,res)=>{
     router.post('/problem',authenticateJwt, async(req,res)=>{
       const problem = new Problems(req.body);
       await problem.save();
+      const tag=req.body.tag;
+      console.log(req.body);
+      const checkTag= await Tag.find({tag:tag});
+      if(checkTag && checkTag.length!=undefined){
+        const putTag=await Tag.findOneAndUpdate({tag:tag,length:checkTag.length+1});
+      }
+      else{
+        const obj={tag:problem.tag,length:1}
+        const newTag=new Tag(obj);
+        await newTag.save();
+      }
       res.json({message:'Problem created successfully',problemId:problem.id });
     });
     router.put('/problems/:problemId',authenticateJwt, async (req,res)=>{
@@ -84,14 +95,18 @@ router.post('/signup',async (req,res)=>{
         res.status(404).json({message:'Problem not found'});
       }
     });
-
+    router.get('/tag',authenticateJwt, async (req,res) => {
+      const tag=Tag.find({});
+      res.json({tag});
+    })
     router.get('/problems/:problemId',authenticateJwt, async (req,res)=>{
       const problem = await Problems.findById(req.params.problemId);
       if(problem){
         res.json(problem);
       }
       else{
-        res.status(404).json("Course not found");
+        res.status(404).json("Questions not found");
       }
     });
+  
 export default router;

@@ -2,8 +2,7 @@ import mongoose,{Schema} from "mongoose";
 const userSchema = new mongoose.Schema({
     username: {type: String},
     name:String,
-    password: String,
-    purchasedCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }]
+    password: String
   });
   
   const adminSchema = new mongoose.Schema({
@@ -14,20 +13,17 @@ const userSchema = new mongoose.Schema({
   const ProblemSchema = new mongoose.Schema({
     title: String,
     difficulty:String,
-    description: String,
-    topicTag: [{ type: Schema.Types.String }],
-    example: [{
-        input:String,
-        output:String,
-    }],
-    constraints: String,
-    testcase:[{
-      input:String,
-      output:String,
-    }]
+    tag:String,
+    videoLink:String,
+    questionLink:String
   });
+  const TagSchema = new mongoose.Schema({
+    tag:String,
+    length:Number
+  })
   
   // Define mongoose models
   export const User = mongoose.model('User', userSchema);
   export const Admin = mongoose.model('Admin', adminSchema);
   export const Problems = mongoose.model('Problems', ProblemSchema);
+  export const Tag = mongoose.model('Tag',TagSchema);
